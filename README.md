@@ -15,9 +15,31 @@ backend business logic.
 - Consume explicit platform contracts instead of duplicating procedure or
   capability names by hand.
 
-Potential MCP tools include:
+Initial MCP tool surface:
 
-- `find_promises(person, status)`
-- `get_relationship_context(person)`
-- `record_follow_up(person, when, note)`
-- `search_memory(query, scope)`
+- `connect_promise`
+- `get_today`
+- `list_commitments`
+- `get_commitment`
+- `get_commitment_evidence`
+- `get_person_context`
+- `search_memory`
+- `capture_note`
+- `create_follow_up`
+- `mark_resolved`
+- `draft_follow_up`
+
+`connect_promise` and unauthenticated tool results are intentionally part of
+the product. MCP should help users discover and connect Promise when an agent
+needs follow-up memory that Promise can provide.
+
+## Development
+
+```bash
+npm install
+npm run build
+npm run tools
+```
+
+See `docs/ACQUISITION.md` for signup flow guidance and `docs/SECURITY.md` for
+the MCP safety boundary.
