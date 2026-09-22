@@ -55,6 +55,39 @@ docker run --rm -p 3000:3000 \
   promise-mcp
 ```
 
+## Production deployment
+
+Production deploys run from this repository with GitHub Actions:
+
+```bash
+gh workflow run "Deploy Azure production" --repo UsePromise/promise-mcp --ref main -f operation=inspect
+gh workflow run "Deploy Azure production" --repo UsePromise/promise-mcp --ref main -f operation=deploy
+```
+
+The workflow builds and validates the MCP server, pushes a digest-pinned
+`promise-mcp` image to the existing Promise Azure Container Registry, then
+creates or updates a dedicated Azure Container App named by
+`AZURE_MCP_APP_NAME`. It reuses the existing production Container Apps
+environment and managed identity from the web Container App, while keeping the
+MCP runtime separate from the web/app container.
+
+Required GitHub environment variables for the `production` environment:
+
+- `AZURE_CLIENT_ID`
+- `AZURE_TENANT_ID`
+- `AZURE_SUBSCRIPTION_ID`
+- `AZURE_RESOURCE_GROUP`
+- `AZURE_ACR_NAME`
+- `AZURE_WEB_APP_NAME`
+- `AZURE_MCP_APP_NAME`
+- `PRODUCTION_API_URL`
+- `PROMISE_APP_URL`
+- `PROMISE_SITE_URL`
+
+The deploy operation smoke-tests `GET /healthz` and `POST /mcp tools/list`
+against the generated Azure Container Apps endpoint. A custom domain such as
+`mcp.usepromise.ai` can be attached after the first successful deployment.
+
 Before public directory submission, deploy the matching platform release that
 adds `/mcp/authorize` grant issuance and `pmcp_` token verification. The token is
 opaque to the MCP server; the platform stores only a SHA-256 hash, expiry,
