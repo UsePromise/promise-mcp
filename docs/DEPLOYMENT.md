@@ -85,8 +85,19 @@ Required GitHub environment variables for the `production` environment:
 - `PROMISE_SITE_URL`
 
 The deploy operation smoke-tests `GET /healthz` and `POST /mcp tools/list`
-against the generated Azure Container Apps endpoint. A custom domain such as
-`mcp.usepromise.ai` can be attached after the first successful deployment.
+against the generated Azure Container Apps endpoint.
+
+Production custom domain:
+
+- `https://mcp.usepromise.ai/healthz`
+- `https://mcp.usepromise.ai/mcp`
+
+DNS records:
+
+- `CNAME mcp.usepromise.ai` ->
+  `promise-prod-mcp.happyground-31cff10e.northeurope.azurecontainerapps.io`
+- `TXT asuid.mcp.usepromise.ai` ->
+  `AD80362ED818BCAC7B10C698CB3B3096DFCB34FC9F0D82187E4CA220D8C1E9D4`
 
 Before public directory submission, deploy the matching platform release that
 adds `/mcp/authorize` grant issuance and `pmcp_` token verification. The token is
