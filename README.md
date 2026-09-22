@@ -1,6 +1,7 @@
 # Promise MCP
 
-Agent-facing MCP server/tools for Promise.
+Agent-facing MCP server/tools for Promise. The hosted HTTP endpoint is `POST
+/mcp`; `GET /healthz` is available for runtime checks.
 
 This repository is intentionally separate from the Promise platform. It should
 compose the platform API into agent-friendly tools, not implement canonical
@@ -43,8 +44,25 @@ any return to an agent URL.
 ```bash
 npm install
 npm run build
+npm run smoke
 npm run tools
+npm run start
 ```
 
-See `docs/ACQUISITION.md` for signup flow guidance and `docs/SECURITY.md` for
-the MCP safety boundary.
+Example MCP call:
+
+```bash
+curl -sS http://localhost:3000/mcp \
+  -H 'content-type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+```
+
+Protected tools return a structured `promise_auth_required` result when no
+Bearer token is present. After the user authorizes `/mcp/authorize`, Promise
+returns a scoped opaque `pmcp_...` bearer token to the agent callback. Bearer
+tool calls are proxied to the Promise platform API, which enforces the grant's
+scopes. `mark_resolved` and `draft_follow_up` intentionally deep-link to Promise
+for user review rather than sending or mutating mail directly.
+
+See `docs/ACQUISITION.md` for signup flow guidance, `docs/SECURITY.md` for the
+MCP safety boundary, and `docs/DEPLOYMENT.md` for container/runtime details.

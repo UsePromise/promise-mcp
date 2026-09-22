@@ -6,17 +6,20 @@
   "description": "Promise MCP server over the Promise platform API",
   "scripts": {
     "build": "tsc --noEmit",
+    "start": "node --import tsx src/server.ts",
+    "smoke": "node --import tsx src/smoke.ts",
     "tools": "node --import tsx src/index.ts"
   },
   "engines": {
     "node": ">=22"
   },
   "dependencies": {
+    "superjson": "^2.2.2",
+    "tsx": "^4.23.15",
     "zod": "^3.24.0"
   },
   "devDependencies": {
     "@types/node": "^22.15.0",
-    "tsx": "^4.20.0",
     "typescript": "^5.8.0"
   }
 }

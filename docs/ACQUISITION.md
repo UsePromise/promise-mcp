@@ -35,3 +35,5 @@ Rules:
   callbacks relative and route users through `/mcp/authorize` before returning
   to an agent URL.
 - Return to the agent only after the user has authorized an appropriate scope.
+  Authorized returns include a scoped `promise_mcp_token` for the agent to send
+  as `Authorization: Bearer pmcp_...`.
