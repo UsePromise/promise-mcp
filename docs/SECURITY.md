@@ -10,6 +10,8 @@ MCP v1 should be read-heavy and preserve the Promise safety contract:
 - Deep-link to Promise for confirmation when action is sensitive.
 - Use explicit scopes for memory, capture, drafting, and mutation.
 - Support revocation and auditability from the Promise account surface.
+- Keep agent return URLs out of provider OAuth callbacks. OAuth should return
+  to Promise first, then Promise can validate scopes and return to the agent.
 
 Do not add `send_email` in v1. Promise's brand promise is that nothing sends
 without explicit user review and confirmation.

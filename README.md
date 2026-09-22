@@ -33,6 +33,11 @@ Initial MCP tool surface:
 the product. MCP should help users discover and connect Promise when an agent
 needs follow-up memory that Promise can provide.
 
+Unauthenticated tool results include a scoped `authorizationUrl` that sends the
+user to `https://app.usepromise.ai/start?source=mcp...`, preserves agent
+attribution, and uses a relative `/mcp/authorize` callback inside Promise before
+any return to an agent URL.
+
 ## Development
 
 ```bash

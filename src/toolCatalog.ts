@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { PROMISE_SITE_URL, signupUrl } from "./config.js";
+import {
+  PROMISE_SITE_URL,
+  type PromiseConnectUrlOptions,
+  type PromiseMcpScope,
+  promiseMcpScopes,
+  signupUrl,
+} from "./config.js";
 
 export const ToolName = z.enum([
   "connect_promise",
@@ -24,6 +30,7 @@ export type PromiseMcpTool = {
   authRequired: boolean;
   readOnly: boolean;
   signupIntent?: string;
+  scopes: readonly PromiseMcpScope[];
   safety: string;
 };
 
@@ -36,6 +43,7 @@ export const promiseTools: PromiseMcpTool[] = [
     authRequired: false,
     readOnly: true,
     signupIntent: "connect_for_agents",
+    scopes: promiseMcpScopes,
     safety: "Never collects provider credentials in the agent. Send the user to Promise.",
   },
   {
@@ -45,6 +53,7 @@ export const promiseTools: PromiseMcpTool[] = [
     authRequired: true,
     readOnly: true,
     signupIntent: "today",
+    scopes: ["promise.memory.read", "promise.evidence.read"],
     safety: "Return concise items and links back to Promise for sensitive action.",
   },
   {
@@ -54,6 +63,7 @@ export const promiseTools: PromiseMcpTool[] = [
     authRequired: true,
     readOnly: true,
     signupIntent: "commitments",
+    scopes: ["promise.memory.read", "promise.evidence.read"],
     safety: "Do not infer more certainty than Promise returns.",
   },
   {
@@ -63,6 +73,7 @@ export const promiseTools: PromiseMcpTool[] = [
     authRequired: true,
     readOnly: true,
     signupIntent: "commitment_detail",
+    scopes: ["promise.memory.read", "promise.evidence.read"],
     safety: "Prefer structured status, due dates, people, and source links over raw mail.",
   },
   {
@@ -72,6 +83,7 @@ export const promiseTools: PromiseMcpTool[] = [
     authRequired: true,
     readOnly: true,
     signupIntent: "evidence",
+    scopes: ["promise.memory.read", "promise.evidence.read"],
     safety: "Return source summaries and citations permitted by the platform API.",
   },
   {
@@ -81,6 +93,7 @@ export const promiseTools: PromiseMcpTool[] = [
     authRequired: true,
     readOnly: true,
     signupIntent: "person_context",
+    scopes: ["promise.memory.read", "promise.evidence.read"],
     safety: "Avoid exposing hidden/private fields unless the platform scopes allow them.",
   },
   {
@@ -90,6 +103,7 @@ export const promiseTools: PromiseMcpTool[] = [
     authRequired: true,
     readOnly: true,
     signupIntent: "search_memory",
+    scopes: ["promise.memory.read"],
     safety: "Search derived Promise memory, not raw provider mailboxes.",
   },
   {
@@ -99,6 +113,7 @@ export const promiseTools: PromiseMcpTool[] = [
     authRequired: true,
     readOnly: false,
     signupIntent: "capture",
+    scopes: ["promise.capture.write"],
     safety: "Echo what Promise understood and require review when the platform requests it.",
   },
   {
@@ -108,6 +123,7 @@ export const promiseTools: PromiseMcpTool[] = [
     authRequired: true,
     readOnly: false,
     signupIntent: "create_follow_up",
+    scopes: ["promise.followup.write"],
     safety: "Only create follow-ups from explicit user instructions.",
   },
   {
@@ -117,6 +133,7 @@ export const promiseTools: PromiseMcpTool[] = [
     authRequired: true,
     readOnly: false,
     signupIntent: "mark_resolved",
+    scopes: ["promise.followup.write"],
     safety: "Confirm destructive or irreversible status changes in the agent UI.",
   },
   {
@@ -126,18 +143,28 @@ export const promiseTools: PromiseMcpTool[] = [
     authRequired: true,
     readOnly: false,
     signupIntent: "draft_follow_up",
+    scopes: ["promise.memory.read", "promise.evidence.read", "promise.draft.write"],
     safety: "Do not send email in v1. Return a draft and Promise confirmation link.",
   },
 ];
 
-export function unauthenticatedToolResult(tool: PromiseMcpTool) {
+export function unauthenticatedToolResult(
+  tool: PromiseMcpTool,
+  options: Omit<PromiseConnectUrlOptions, "intent" | "scopes"> = {},
+) {
+  const intent = tool.signupIntent ?? tool.name;
+  const connectUrl = signupUrl({ ...options, intent, scopes: tool.scopes });
   return {
     type: "promise_auth_required" as const,
     title: "Connect Promise",
     message:
       "Promise can answer this after the user connects Gmail or Outlook and authorizes agent access.",
-    signupUrl: signupUrl("mcp", tool.signupIntent ?? tool.name),
+    signupUrl: connectUrl,
+    authorizationUrl: connectUrl,
     docsUrl: `${PROMISE_SITE_URL}/mcp`,
     tool: tool.name,
+    intent,
+    requiredScopes: tool.scopes,
+    returnMode: "agent_handoff" as const,
   };
 }
