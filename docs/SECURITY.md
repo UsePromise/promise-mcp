@@ -9,9 +9,11 @@ MCP v1 should be read-heavy and preserve the Promise safety contract:
 - Draft follow-ups without sending them.
 - Deep-link to Promise for confirmation when action is sensitive.
 - Use explicit scopes for memory, capture, drafting, and mutation.
-- Use scoped opaque `pmcp_` bearer tokens issued only by Promise after the user
-  approves `/mcp/authorize`; the platform stores token hashes, expiry, scopes,
-  and grant audit metadata.
+- Return only short-lived one-time authorization codes from `/mcp/authorize`.
+  Agents must exchange a code at `/api/mcp/token` before receiving a scoped
+  opaque `pmcp_` bearer token.
+- Store token and authorization-code hashes only; keep expiry, scopes, and
+  grant audit metadata in the platform.
 - Support revocation from the Promise account surface and revocation API.
 - Keep agent return URLs out of provider OAuth callbacks. OAuth should return
   to Promise first, then Promise can validate scopes and return to the agent.

@@ -59,10 +59,11 @@ curl -sS http://localhost:3000/mcp \
 
 Protected tools return a structured `promise_auth_required` result when no
 Bearer token is present. After the user authorizes `/mcp/authorize`, Promise
-returns a scoped opaque `pmcp_...` bearer token to the agent callback. Bearer
-tool calls are proxied to the Promise platform API, which enforces the grant's
-scopes. `mark_resolved` and `draft_follow_up` intentionally deep-link to Promise
-for user review rather than sending or mutating mail directly.
+returns a short-lived one-time code to the agent callback. The agent exchanges
+that code at `/api/mcp/token` for a scoped opaque `pmcp_...` bearer token.
+Bearer tool calls are proxied to the Promise platform API, which enforces the
+grant's scopes. `mark_resolved` and `draft_follow_up` intentionally deep-link
+to Promise for user review rather than sending or mutating mail directly.
 
 See `docs/ACQUISITION.md` for signup flow guidance, `docs/SECURITY.md` for the
 MCP safety boundary, and `docs/DEPLOYMENT.md` for container/runtime details.
