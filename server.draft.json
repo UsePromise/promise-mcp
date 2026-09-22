@@ -1,0 +1,26 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "ai.usepromise/promise",
+  "title": "Promise",
+  "description": "Promise is an AI follow-through memory server for what you owe, what you are waiting on, and what matters about people, with evidence-backed answers and user-reviewed actions.",
+  "websiteUrl": "https://www.usepromise.ai/mcp",
+  "repository": {
+    "url": "https://github.com/UsePromise/promise-mcp",
+    "source": "github"
+  },
+  "version": "0.1.0",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://promise-prod-mcp.happyground-31cff10e.northeurope.azurecontainerapps.io/mcp"
+    }
+  ],
+  "_meta": {
+    "io.modelcontextprotocol.registry/publisher-provided": {
+      "productionHealthUrl": "https://promise-prod-mcp.happyground-31cff10e.northeurope.azurecontainerapps.io/healthz",
+      "preferredFutureRemoteUrl": "https://mcp.usepromise.ai/mcp",
+      "safetyContract": "Promise MCP exposes derived Promise memory, not raw mailbox access. MCP v1 does not send email.",
+      "authFlow": "Unauthenticated protected tools return a Promise signup/authorization URL. Promise returns a short-lived one-time code; agents exchange it at /api/mcp/token for a scoped pmcp_ bearer token."
+    }
+  }
+}
