@@ -16,30 +16,26 @@ Public discovery surfaces verified on 2026-09-22:
 
 ## Registry submission status
 
-`server.draft.json` contains the intended official MCP Registry metadata for
-the remote server. Do not publish it yet.
+`server.json` is the canonical metadata published to the official MCP Registry.
+`server.draft.json` is retained as the editable source copy.
 
-Remaining blockers before public registry/directory submission:
+Published listing:
 
-1. Prove the `ai.usepromise` registry namespace through the official registry
-   flow, either with a DNS TXT record or `/.well-known/mcp-registry-auth`.
-2. Decide whether `UsePromise/promise-mcp` should be public before submission.
-   The registry metadata references the GitHub repository.
-3. Re-run production smoke checks before publishing:
-   `GET /healthz`, `POST /mcp initialize`, `tools/list`, unauthenticated
-   `promise_auth_required`, and an authorized `pmcp_` tool call.
+- Name: `ai.usepromise/promise`
+- Version: `0.1.0`
+- Status: active
+- Published: 2026-09-22
+- Remote: `https://mcp.usepromise.ai/mcp`
 
-## Submission commands
+## Publishing commands
 
-After the blockers are resolved:
+To update the listing after metadata changes:
 
 ```bash
-mcp-publisher auth
-cp server.draft.json server.json
-mcp-publisher publish
+mcp-publisher validate server.json
+mcp-publisher publish server.json
 ```
 
-Keep `server.draft.json` until the canonical endpoint is stable. If the registry
-requires GitHub namespace publishing instead of domain namespace publishing, use
-the `mcp-publisher init` output as the source of truth and preserve the same
-description, remote endpoint, safety contract, and authorization flow.
+Publishing uses domain authentication for `usepromise.ai`, which permits the
+reverse-DNS registry name `ai.usepromise/promise`. Keep the private signing key
+out of the repository.
