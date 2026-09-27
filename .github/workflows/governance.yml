@@ -1,0 +1,22 @@
+name: Governance guardrails
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mcp-governance-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  governance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Run MCP boundary and complexity guardrails
+        run: node scripts/governance-check.mjs
