@@ -2,6 +2,8 @@
 
 This repository owns the agent-facing MCP client surface for Promise. It composes the Promise platform API into safe, discoverable tools; it does not own canonical Promise business logic or storage.
 
+Promise-wide agent, skill, governance, and one-human-company conventions are defined in `UsePromise/.github/OPERATING-SYSTEM.md`. This file remains authoritative for MCP-local implementation rules.
+
 ## One-human-company invariants
 
 Promise is intentionally optimized to remain operable by one human for as long as practical. Every material change should minimize permanent operational and conceptual complexity, prefer deletion/consolidation over addition, and avoid new services, state stores, dependencies, scheduled jobs, settings, or concepts unless they remove more complexity than they create.
