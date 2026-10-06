@@ -8,15 +8,17 @@
 
 ## Governance
 
-Dependency rationale: N/A — no dependency additions or upgrades.
+<!-- Fill a field only when CI asks for it. Stock "N/A — ..." placeholders do not pass. -->
 
-Tool-surface rationale: N/A — MCP tool catalog unchanged.
+Dependency rationale:
 
-Authorization/boundary impact: N/A — platform/auth/tool-handler boundary unchanged.
+Tool-surface rationale:
 
-Client discovery impact: N/A — public MCP server metadata unchanged.
+Authorization/boundary impact:
 
-Operational impact: N/A — deployment/CI/Docker behavior unchanged.
+Client discovery impact:
+
+Operational impact:
 
 ## Complexity delta
 

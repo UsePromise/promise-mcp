@@ -18,11 +18,33 @@ let body = '';
 try { body = JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8')).pull_request?.body ?? ''; } catch {}
 const failures = [];
 const notes = [];
-const hasField = (label) => {
+const templatePlaceholders = new Set([
+  'n/a - no dependency additions or upgrades.',
+  'n/a - no dependency additions or upgrades',
+  'n/a - mcp tool catalog unchanged.',
+  'n/a - mcp tool catalog unchanged',
+  'n/a - platform/auth/tool-handler boundary unchanged.',
+  'n/a - platform/auth/tool-handler boundary unchanged',
+  'n/a - public mcp server metadata unchanged.',
+  'n/a - public mcp server metadata unchanged',
+  'n/a - deployment/ci/docker behavior unchanged.',
+  'n/a - deployment/ci/docker behavior unchanged',
+]);
+const normalizeField = (value) => value.toLowerCase().replace(/[—–]/g, '-').replace(/\s+/g, ' ').trim();
+const fieldValue = (label) => {
   const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return new RegExp(`(?:^|\\n)\\s*(?:[-*]\\s*)?${escaped}\\s*:\\s*\\S+`, 'i').test(body);
+  const match = body.match(new RegExp(`(?:^|\\n)\\s*(?:[-*]\\s*)?${escaped}\\s*:\\s*(.*)$`, 'im'));
+  return match?.[1]?.trim() ?? '';
 };
-const requireField = (label, why) => { if (!hasField(label)) failures.push(`${label}: required — ${why}`); };
+const hasSubstantiveField = (label) => {
+  const value = fieldValue(label);
+  if (!value) return false;
+  const normalized = normalizeField(value);
+  if (templatePlaceholders.has(normalized)) return false;
+  if (/^n\/a(?:\s*-\s*)?[.!]?$/.test(normalized)) return false;
+  return true;
+};
+const requireField = (label, why) => { if (!hasSubstantiveField(label)) failures.push(`${label}: required — ${why}`); };
 
 function jsonAt(ref, file) { try { return JSON.parse(run('show', `${ref}:${file}`)); } catch { return null; } }
 function currentJson(file) { try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return null; } }
@@ -82,7 +104,7 @@ if (notes.length) console.log(`governance-check detected:\n- ${notes.join('\n- '
 if (failures.length) {
   console.error('\nGovernance check failed. Add the required PR-body field(s) with concrete explanation/evidence:\n');
   for (const failure of failures) console.error(`- ${failure}`);
-  console.error('\nMCP remains a thin client over the Promise platform API. Use N/A only when genuinely not applicable, with an explanation.');
+  console.error('\nMCP remains a thin client over the Promise platform API. Untouched template N/A placeholders do not count; replace them with a concrete explanation.');
   process.exit(1);
 }
 console.log('governance-check: passed.');
